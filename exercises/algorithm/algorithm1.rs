@@ -62,48 +62,30 @@ impl<T> LinkedList<T> {
                 _ => self.get_ith_node(unsafe { (*next_ptr.as_ptr()).next }, index - 1),
             },
         }
-    }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-    	where
-        T:PartialOrd,
-        {
-                    let mut head: Option<NonNull<Node<T>>> = None;   
-        let mut tail: Option<NonNull<Node<T>>> = None;   
+    pub fn merge_clone(mut list_a: LinkedList<T>, mut list_b: LinkedList<T>) -> Self
+    where
+        T: Clone + PartialOrd,
+    {
+        let mut out = Self::new();
+        let (n, m) = (list_a.length, list_b.length);
+        let (mut i, mut j) = (0u32, 0u32);
 
-        let mut a = list_a.start;   
-        let mut b = list_b.start;
-
-        while a.is_some() || b.is_some() {
-            let picked = match (a, b) {
-                (Some(pa), Some(pb)) => unsafe {
-                    if (*pa.as_ptr()).val <= (*pb.as_ptr()).val {
-                        a = (*pa.as_ptr()).next;
-                        Some(pa)
-                    } else {
-                        b = (*pb.as_ptr()).next;
-                        Some(pb)
-                    }
-                },
-                (Some(pa), None) => {                  
-                    a = unsafe { (*pa.as_ptr()).next };
-                    Some(pa)
-                }
-                (None, Some(pb)) => {                
-                    b = unsafe { (*pb.as_ptr()).next };
-                    Some(pb)
-                }
-                (None, None) => None,
-            };
-
-            if let Some(node) = picked {
-                match tail {
-                    None => head = Some(node), 
-                    Some(prev) => unsafe { (*prev.as_ptr()).next = Some(node) },
-                }
-                tail = Some(node);
+        while i < n && j < m {
+            let a = list_a.get(i as i32).unwrap();
+            let b = list_b.get(j as i32).unwrap();
+            if a <= b {
+                out.add(a.clone());
+                i += 1;
+            } else {
+                out.add(b.clone());
+                j += 1;
             }
         }
+        while i < n { let v = list_a.get(i as i32).unwrap().clone(); out.add(v); i += 1; }
+        while j < m { let v = list_b.get(j as i32).unwrap().clone(); out.add(v); j += 1; }
 
+        out
+    }
         if let Some(last) = tail {
             unsafe { (*last.as_ptr()).next = None };
         }
