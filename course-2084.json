@@ -2,7 +2,7 @@
   "schema": 1,
   "courseId": 2084,
   "repository": "LearningOS/2026a-rustling-YYZqwe",
-  "commit": "32f0de615ff259af5913d7485cae0c1d3fc0d71d",
+  "commit": "536f1a97740e5def82e364cfbed1b1b550d01762",
   "score": 30,
   "totalScore": 110,
   "exercises": [
@@ -778,9 +778,9 @@
     }
   ],
   "student": "YYZqwe",
-  "runId": "38405377951",
+  "runId": "38898427989",
   "runAttempt": "1",
   "upload": {
-    "status": "accepted"
+    "status": "pending"
   }
 }
