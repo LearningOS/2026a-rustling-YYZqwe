@@ -1,9 +1,3 @@
-/*
-	single linked list merge
-	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
-*/
-// I AM NOT DONE
-
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
 use std::vec::*;
@@ -43,7 +37,7 @@ impl<T> LinkedList<T> {
             end: None,
         }
     }
-
+}
     pub fn add(&mut self, obj: T) {
         let mut node = Box::new(Node::new(obj));
         node.next = None;
@@ -70,15 +64,56 @@ impl<T> LinkedList<T> {
         }
     }
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+    	where
+        T:PartialOrd,
+        {
+                    let mut head: Option<NonNull<Node<T>>> = None;   
+        let mut tail: Option<NonNull<Node<T>>> = None;   
+
+        let mut a = list_a.start;   
+        let mut b = list_b.start;
+
+        while a.is_some() || b.is_some() {
+            let picked = match (a, b) {
+                (Some(pa), Some(pb)) => unsafe {
+                    if (*pa.as_ptr()).val <= (*pb.as_ptr()).val {
+                        a = (*pa.as_ptr()).next;
+                        Some(pa)
+                    } else {
+                        b = (*pb.as_ptr()).next;
+                        Some(pb)
+                    }
+                },
+                (Some(pa), None) => {                  
+                    a = unsafe { (*pa.as_ptr()).next };
+                    Some(pa)
+                }
+                (None, Some(pb)) => {                
+                    b = unsafe { (*pb.as_ptr()).next };
+                    Some(pb)
+                }
+                (None, None) => None,
+            };
+
+            if let Some(node) = picked {
+                match tail {
+                    None => head = Some(node), 
+                    Some(prev) => unsafe { (*prev.as_ptr()).next = Some(node) },
+                }
+                tail = Some(node);
+            }
         }
-	}
-}
+
+        if let Some(last) = tail {
+            unsafe { (*last.as_ptr()).next = None };
+        }
+
+        Self {
+            length: list_a.length + list_b.length,
+            start: head,
+            end: tail,
+        }
+        }
 
 impl<T> Display for LinkedList<T>
 where
